@@ -6,6 +6,7 @@ import com.trivenishoppingmall.models.Product;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -16,6 +17,7 @@ public class FakeStoreProductService implements ProductService {
         this.restTemplate = restTemplate;
     }
 
+    // completed
     @Override
     public Product getProductById(Long id) {
         FakeStoreProductDTO fakeStoreProduct = restTemplate.getForObject("https://fakestoreapi.com/products/" + id,
@@ -24,27 +26,60 @@ public class FakeStoreProductService implements ProductService {
     }
 
     @Override
-    public List<Product> getAllProductsById() {
-        return null;
+    public List<Product> getAllProducts() {
+        // to avoid linkedHashmap use array[]
+        FakeStoreProductDTO[] fakeStoreProductsList = restTemplate.getForObject("https://fakestoreapi.com/products", FakeStoreProductDTO[].class);
+        List<Product> productList = new ArrayList<>();
+
+        assert fakeStoreProductsList != null;
+        for (FakeStoreProductDTO fakeStoreProductDTO:fakeStoreProductsList){
+             productList.add(convertToProduct(fakeStoreProductDTO));
+        }
+        return productList;
     }
 
+    // 04th may
     @Override
     public Product createProduct(Product product) {
-        return null;
+
+        FakeStoreProductDTO fakeStoreProduct = convertToFakeStoreProduct(product);
+        FakeStoreProductDTO responseFakeStoreProduct = restTemplate.postForObject("https://fakestoreapi.com/products", fakeStoreProduct, FakeStoreProductDTO.class);
+        return convertToProduct(responseFakeStoreProduct);
+    }
+
+    private FakeStoreProductDTO convertToFakeStoreProduct(Product product) {
+        if (product == null) {
+            return null;
+        }
+        // image
+        FakeStoreProductDTO fakeStoreProductDTO = new FakeStoreProductDTO();
+        fakeStoreProductDTO.setTitle(product.getTitle());
+        fakeStoreProductDTO.setPrice(product.getPrice());
+        fakeStoreProductDTO.setDescription(product.getDescription());
+        fakeStoreProductDTO.setCategory(product.getCategory().getTitle());
+
+        return fakeStoreProductDTO;
     }
 
     @Override
     public Product replaceProduct(Product product, Long id) {
-        return null;
+        FakeStoreProductDTO fakeStoreProductDTO=convertToFakeStoreProduct(product);
+        restTemplate.put("https://fakestoreapi.com/products/"+id,fakeStoreProductDTO,FakeStoreProductDTO.class);
+
+        return convertToProduct(fakeStoreProductDTO);
     }
 
     @Override
     public Product updateProduct(Product product, Long id) {
-        return null;
+        FakeStoreProductDTO fakeStoreProductDTO=convertToFakeStoreProduct(product);
+       FakeStoreProductDTO responseFakeStoreProductDTO= restTemplate.patchForObject("https://fakestoreapi.com/products/"+id,fakeStoreProductDTO,FakeStoreProductDTO.class);
+        return convertToProduct(responseFakeStoreProductDTO);
     }
 
+    // 04th may
     @Override
     public Product deleteProduct(Long id) {
+
         return null;
     }
 

@@ -2,6 +2,8 @@ package com.trivenishoppingmall.controllers;
 
 import com.trivenishoppingmall.models.Product;
 import com.trivenishoppingmall.services.ProductService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -24,28 +26,28 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    public Product getProductById(@PathVariable("id") Long id) {
-        return productService.getProductById(id);
+    public ResponseEntity<Product> getProductById(@PathVariable("id") Long id) {
+        return new ResponseEntity<>(productService.getProductById(id), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @GetMapping()
     public List<Product> getAllProducts() {
-        return new ArrayList<>();
+        return productService.getAllProducts();
     }
 
     @PostMapping()
     public Product createProduct(@RequestBody Product product) {
-        return new Product();
+        return productService.createProduct(product);
     }
 
     @PutMapping("/{id}")
     public Product replaceProductById(@RequestBody Product product, @PathVariable("id") Long id) {
-        return new Product();
+        return productService.replaceProduct(product, id);
     }
 
     @PatchMapping("/{id}")
     public Product updateProductById(@PathVariable("id") Long id, @RequestBody Product product) {
-        return new Product();
+        return productService.updateProduct(product, id);
     }
 
     @DeleteMapping("/{id}")

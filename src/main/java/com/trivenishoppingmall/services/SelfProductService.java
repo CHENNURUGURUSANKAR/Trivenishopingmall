@@ -11,7 +11,7 @@ public class SelfProductService implements ProductService{
     }
 
     @Override
-    public List<Product> getAllProductsById() {
+    public List<Product> getAllProducts() {
         return null;
     }
 
